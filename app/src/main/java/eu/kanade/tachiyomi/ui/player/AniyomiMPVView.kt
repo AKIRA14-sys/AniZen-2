@@ -181,12 +181,14 @@ class AniyomiMPVView(context: Context, attributes: AttributeSet?) : BaseMPVView(
             Debanding.GPU -> mpv?.setOptionString("deband", "yes")
         }
 
+        // ANZ -->
         advancedPreferences.playerStatisticsPage().get().let {
-            if (it != 0) {
+            if (it in 1..5) {
                 mpv?.command("script-binding", "stats/display-stats-toggle")
                 mpv?.command("script-binding", "stats/display-page-$it")
             }
         }
+        // ANZ <--
 
         // ANZ -->
         if (decoderPreferences.smoothMotion().get()) {
