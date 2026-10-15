@@ -96,9 +96,6 @@ class AniyomiMPVView(context: Context, attributes: AttributeSet?) : BaseMPVView(
         setVo(if (decoderPreferences.gpuNext().get()) "gpu-next" else "gpu")
         mpv?.setPropertyBoolean("pause", true)
         setSafeOptionString("profile", "fast")
-        // ANZ -->
-        setSafeOptionString("gpu-dumb-mode", "no")
-        // ANZ <--
         mpv?.setOptionString("hwdec", if (decoderPreferences.tryHWDecoding().get()) "auto" else "no")
 
         val isHighQuality = decoderPreferences.highQualityScaling().get()
@@ -125,6 +122,7 @@ class AniyomiMPVView(context: Context, attributes: AttributeSet?) : BaseMPVView(
         } else {
             mpv?.setOptionString("video-sync", "audio")
             mpv?.setOptionString("interpolation", "no")
+            mpv?.setOptionString("gpu-dumb-mode", "auto")
         }
         // ANZ <--
 
