@@ -793,6 +793,9 @@ class PlayerActivity : BaseActivity() {
         if (player.isExiting) return
         when (property) {
             "interpolation" -> PlayerStats.isInterpolating.value = value
+            // ANZ -->
+            "gpu-dumb-mode" -> PlayerStats.gpuDumbMode.value = value
+            // ANZ <--
             "pause" if value -> {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -816,6 +819,9 @@ class PlayerActivity : BaseActivity() {
         when (property) {
             "video-sync" -> PlayerStats.videoSync.value = value
             "tscale" -> PlayerStats.tscale.value = value
+            // ANZ -->
+            "current-vo" -> PlayerStats.currentVo.value = value
+            // ANZ <--
         }
         when (property.substringBeforeLast("/")) {
             "user-data/aniyomi" -> viewModel.handleLuaInvocation(property, value)

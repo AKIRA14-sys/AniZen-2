@@ -96,6 +96,9 @@ class AniyomiMPVView(context: Context, attributes: AttributeSet?) : BaseMPVView(
         setVo(if (decoderPreferences.gpuNext().get()) "gpu-next" else "gpu")
         mpv?.setPropertyBoolean("pause", true)
         setSafeOptionString("profile", "fast")
+        // ANZ -->
+        setSafeOptionString("gpu-dumb-mode", "no")
+        // ANZ <--
         mpv?.setOptionString("hwdec", if (decoderPreferences.tryHWDecoding().get()) "auto" else "no")
 
         val isHighQuality = decoderPreferences.highQualityScaling().get()
@@ -118,6 +121,7 @@ class AniyomiMPVView(context: Context, attributes: AttributeSet?) : BaseMPVView(
             mpv?.setOptionString("tscale", decoderPreferences.interpolationMode().get().value)
             mpv?.setOptionString("display-fps", targetFps.toString())
             mpv?.setOptionString("override-display-fps", targetFps.toString())
+            mpv?.setOptionString("gpu-dumb-mode", "no")
         } else {
             mpv?.setOptionString("video-sync", "audio")
             mpv?.setOptionString("interpolation", "no")
@@ -192,6 +196,7 @@ class AniyomiMPVView(context: Context, attributes: AttributeSet?) : BaseMPVView(
 
             mpv?.setPropertyDouble("display-fps", targetFps)
             mpv?.setPropertyDouble("override-display-fps", targetFps)
+            mpv?.setPropertyString("gpu-dumb-mode", "no")
         }
         // ANZ <--
     }
@@ -249,6 +254,8 @@ class AniyomiMPVView(context: Context, attributes: AttributeSet?) : BaseMPVView(
         "estimated-display-fps" to MPV.mpvFormat.MPV_FORMAT_DOUBLE,
         "vo-delayed-frame-count" to MPV.mpvFormat.MPV_FORMAT_INT64,
         "mistime" to MPV.mpvFormat.MPV_FORMAT_DOUBLE,
+        "gpu-dumb-mode" to MPV.mpvFormat.MPV_FORMAT_FLAG,
+        "current-vo" to MPV.mpvFormat.MPV_FORMAT_STRING,
         // ANZ <--
 
         "user-data/aniyomi/show_text" to MPV.mpvFormat.MPV_FORMAT_STRING,
