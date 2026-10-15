@@ -50,6 +50,7 @@ import tachiyomi.presentation.core.i18n.stringResource
 @Composable
 fun AudioTracksSheet(
     tracks: ImmutableList<VideoTrack>,
+    selectedAudio: Int = -1,
     onSelect: (VideoTrack) -> Unit,
     onAddAudioTrack: () -> Unit,
     onOpenDelayPanel: () -> Unit,
@@ -81,9 +82,12 @@ fun AudioTracksSheet(
             )
         },
         track = {
+            val isSelected = (selectedAudio != -1 && it.trackId == selectedAudio) ||
+                it.isSelected ||
+                (it.selection > -1)
             AudioTrackRow(
                 track = it,
-                isSelected = it.selection > -1,
+                isSelected = isSelected,
                 onClick = { onSelect(it) },
             )
         },
