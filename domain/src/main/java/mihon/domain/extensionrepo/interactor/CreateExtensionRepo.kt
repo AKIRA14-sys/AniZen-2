@@ -95,5 +95,12 @@ class CreateExtensionRepo(
         const val OFFICIAL_REPO_SIGNATURE = YUZONO_SIGNATURE
         const val KEIYOUSHI_REPO_SIGNATURE = KEIYOUSHI_SIGNATURE
         const val SALMANBAPPI_REPO_SIGNATURE = SALMANBAPPI_SIGNATURE
+
+        // ANZ -->
+        val DEFAULT_REPOSITORIES = listOf(
+            "https://raw.githubusercontent.com/yuzono/anime-repo/repo/index.min.json",
+            "https://raw.githubusercontent.com/salmanbappi/extensions-repo/main/index.min.json",
+        )
+        // ANZ <--
     }
 }
