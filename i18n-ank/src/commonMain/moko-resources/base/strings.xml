@@ -188,6 +188,9 @@
     <string name="pref_discord_show_timestamp_summary_episode">Display elapsed/remaining time</string>
 
         <!-- AniZen -->
+    <!-- ANZ -->
+    <string name="app_name" translatable="false">Anizen</string>
+    <!-- ANZ -->
     <string name="pref_library_summary_episode">Categories, global update, episode swipe</string>
     <string name="pref_category_delete_episodes">Delete episodes</string>
     <string name="pref_remove_bookmarked_episodes">Allow deleting bookmarked episodes</string>
