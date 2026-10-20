@@ -167,13 +167,15 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
             Injekt.get<CustomAnimeRepository>()
 
             // ANZ -->
-            try {
-                val createExtensionRepo = Injekt.get<mihon.domain.extensionrepo.interactor.CreateExtensionRepo>()
-                for (repoUrl in mihon.domain.extensionrepo.interactor.CreateExtensionRepo.DEFAULT_REPOSITORIES) {
-                    createExtensionRepo.await(repoUrl)
+            // Seed default extension repos asynchronously on startup if not present
+            launch {
+                try {
+                    val createExtensionRepo = Injekt.get<mihon.domain.extensionrepo.interactor.CreateExtensionRepo>()
+                    createExtensionRepo.await(mihon.domain.extensionrepo.interactor.CreateExtensionRepo.DEFAULT_REPO_URL_1)
+                    createExtensionRepo.await(mihon.domain.extensionrepo.interactor.CreateExtensionRepo.DEFAULT_REPO_URL_2)
+                } catch (e: Exception) {
+                    logcat(LogPriority.WARN, e) { "Failed to seed default extension repos" }
                 }
-            } catch (e: Exception) {
-                logcat(LogPriority.WARN, e) { "Failed to seed default extension repos" }
             }
             // ANZ <--
 
