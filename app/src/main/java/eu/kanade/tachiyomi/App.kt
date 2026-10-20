@@ -166,6 +166,17 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
             Injekt.get<eu.kanade.tachiyomi.data.cache.CoverCache>()
             Injekt.get<CustomAnimeRepository>()
 
+            // ANZ -->
+            try {
+                val createExtensionRepo = Injekt.get<mihon.domain.extensionrepo.interactor.CreateExtensionRepo>()
+                for (repoUrl in mihon.domain.extensionrepo.interactor.CreateExtensionRepo.DEFAULT_REPOSITORIES) {
+                    createExtensionRepo.await(repoUrl)
+                }
+            } catch (e: Exception) {
+                logcat(LogPriority.WARN, e) { "Failed to seed default extension repos" }
+            }
+            // ANZ <--
+
             // Warm the cover color/ratio cache so the first library scroll is already
             // smooth instead of extracting + measuring on the fly (KMK).
             CoverColorObserver.load()
