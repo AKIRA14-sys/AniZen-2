@@ -171,10 +171,10 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
             launch {
                 try {
                     val createExtensionRepo = Injekt.get<mihon.domain.extensionrepo.interactor.CreateExtensionRepo>()
-                    createExtensionRepo.await(mihon.domain.extensionrepo.interactor.CreateExtensionRepo.DEFAULT_REPO_URL_1)
-                    createExtensionRepo.await(mihon.domain.extensionrepo.interactor.CreateExtensionRepo.DEFAULT_REPO_URL_2)
+                    createExtensionRepo.await(mihon.domain.extensionrepo.interactor.CreateExtensionRepo.DEFAULT_REPO_URL_1) // ANZ
+                    createExtensionRepo.await(mihon.domain.extensionrepo.interactor.CreateExtensionRepo.DEFAULT_REPO_URL_2) // ANZ
                 } catch (e: Exception) {
-                    logcat(LogPriority.WARN, e) { "Failed to seed default extension repos" }
+                    logcat(LogPriority.WARN, e) { "Failed to seed default extension repos" } // ANZ
                 }
             }
             // ANZ <--
