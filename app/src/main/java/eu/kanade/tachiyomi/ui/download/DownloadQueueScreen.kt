@@ -66,6 +66,7 @@ import eu.kanade.tachiyomi.databinding.DownloadListBinding
 import kotlinx.collections.immutable.persistentListOf
 import tachiyomi.core.common.util.lang.launchUI
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.ank.AMR
 import tachiyomi.presentation.core.components.Pill
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.stringResource
@@ -141,7 +142,7 @@ data object DownloadQueueScreen : Screen {
                         Tab(
                             selected = selectedTabIndex == 0,
                             onClick = { selectedTabIndex = 0 },
-                            text = { Text(stringResource(MR.strings.downloads_tab_queue)) },
+                            text = { Text(stringResource(AMR.strings.downloads_tab_queue)) },
                         )
                         Tab(
                             selected = selectedTabIndex == 1,
@@ -149,7 +150,7 @@ data object DownloadQueueScreen : Screen {
                                 selectedTabIndex = 1
                                 screenModel.refreshCompletedDownloads()
                             },
-                            text = { Text(stringResource(MR.strings.downloads_tab_completed)) },
+                            text = { Text(stringResource(AMR.strings.downloads_tab_completed)) },
                         )
                     }
                 }
@@ -247,7 +248,7 @@ data object DownloadQueueScreen : Screen {
             } else {
                 if (completedList.isEmpty()) {
                     EmptyScreen(
-                        stringRes = MR.strings.no_completed_downloads,
+                        stringRes = AMR.strings.no_completed_downloads,
                         modifier = Modifier.padding(contentPadding),
                     )
                     return@Scaffold
@@ -291,7 +292,7 @@ data object DownloadQueueScreen : Screen {
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.PlayArrow,
-                                            contentDescription = stringResource(MR.strings.action_play_offline),
+                                            contentDescription = stringResource(AMR.strings.action_play_offline),
                                         )
                                     }
                                     IconButton(
@@ -299,7 +300,7 @@ data object DownloadQueueScreen : Screen {
                                     ) {
                                         Icon(
                                             imageVector = Icons.Outlined.Download,
-                                            contentDescription = stringResource(MR.strings.action_save_to_device),
+                                            contentDescription = stringResource(AMR.strings.action_save_to_device),
                                         )
                                     }
                                     IconButton(
