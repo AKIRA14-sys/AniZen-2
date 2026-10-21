@@ -243,4 +243,13 @@
 
     <!-- WebView -->
     <string name="action_webview_close_tab">Close tab</string>
+
+    <!-- ANZ Downloads -->
+    <string name="downloads_tab_queue">Queue</string>
+    <string name="downloads_tab_completed">Completed</string>
+    <string name="action_play_offline">Play offline</string>
+    <string name="action_save_to_device">Save to device</string>
+    <string name="export_download_success">Saved %s to device</string>
+    <string name="export_download_failed">Failed to save %s to device</string>
+    <string name="no_completed_downloads">No completed downloads</string>
 </resources>

@@ -8,6 +8,7 @@ import dev.icerock.moko.resources.StringResource
 import eu.kanade.presentation.util.Tab
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.ui.browse.BrowseTab
+import eu.kanade.tachiyomi.ui.download.DownloadsTab
 import eu.kanade.tachiyomi.ui.history.HistoryTab
 import eu.kanade.tachiyomi.ui.home.FeedTab
 import eu.kanade.tachiyomi.ui.library.LibraryTab
@@ -236,19 +237,25 @@ object NavConfigValidator {
 object NavPresets {
     // ANZ -->
     val DEFAULT = NavConfig(
-        visibleTabs = persistentListOf(NavItem.FEED.id, NavItem.BROWSE.id, NavItem.LIBRARY.id, NavItem.MORE.id),
-        hiddenTabs = persistentListOf(NavItem.UPDATES.id, NavItem.HISTORY.id)
+        visibleTabs = persistentListOf(
+            NavItem.FEED.id,
+            NavItem.BROWSE.id,
+            NavItem.LIBRARY.id,
+            NavItem.DOWNLOADS.id,
+            NavItem.MORE.id,
+        ),
+        hiddenTabs = persistentListOf(NavItem.UPDATES.id, NavItem.HISTORY.id),
     )
     // ANZ <--
 
     val MINIMAL = NavConfig(
         visibleTabs = persistentListOf(NavItem.LIBRARY.id, NavItem.MORE.id),
-        hiddenTabs = persistentListOf(NavItem.FEED.id, NavItem.UPDATES.id, NavItem.HISTORY.id, NavItem.BROWSE.id)
+        hiddenTabs = persistentListOf(NavItem.FEED.id, NavItem.BROWSE.id, NavItem.DOWNLOADS.id, NavItem.UPDATES.id, NavItem.HISTORY.id)
     )
 
     val POWER = NavConfig(
-        visibleTabs = persistentListOf(NavItem.LIBRARY.id, NavItem.FEED.id, NavItem.UPDATES.id, NavItem.BROWSE.id, NavItem.MORE.id),
-        hiddenTabs = persistentListOf(NavItem.HISTORY.id)
+        visibleTabs = persistentListOf(NavItem.FEED.id, NavItem.BROWSE.id, NavItem.LIBRARY.id, NavItem.DOWNLOADS.id, NavItem.MORE.id),
+        hiddenTabs = persistentListOf(NavItem.UPDATES.id, NavItem.HISTORY.id)
     )
 }
 
@@ -261,8 +268,11 @@ enum class NavItem(
     val iconVector: ImageVector? = null,
     val behavior: NavBehavior = NavBehavior()
 ) {
-    LIBRARY("library", MR.strings.label_library, LibraryTab, R.drawable.anim_library_enter, R.drawable.ic_animelibrary_outline_24dp),
+    // ANZ -->
     FEED("feed", MR.strings.feed, FeedTab, R.drawable.ic_dynamic_feed_24dp, R.drawable.ic_dynamic_feed_24dp),
+    BROWSE("browse", MR.strings.action_search, BrowseTab, R.drawable.anim_browse_enter, R.drawable.ic_browse_filled_24dp),
+    LIBRARY("library", MR.strings.label_library, LibraryTab, R.drawable.anim_library_enter, R.drawable.ic_animelibrary_outline_24dp),
+    DOWNLOADS("downloads", MR.strings.label_download_queue, DownloadsTab, R.drawable.ic_download_item_24dp, R.drawable.ic_download_item_24dp),
     UPDATES("updates", MR.strings.label_recent_updates, UpdatesTab, R.drawable.anim_updates_enter, R.drawable.ic_updates_outline_24dp),
     HISTORY("history", MR.strings.history, HistoryTab, R.drawable.anim_history_enter, R.drawable.ic_progress_clock_24dp),
     SCHEDULE(
@@ -273,8 +283,8 @@ enum class NavItem(
         R.drawable.ic_progress_clock_24dp,
         Icons.Outlined.DateRange,
     ),
-    BROWSE("browse", MR.strings.browse, BrowseTab, R.drawable.anim_browse_enter, R.drawable.ic_browse_filled_24dp),
-    MORE("more", MR.strings.label_more, MoreTab, R.drawable.anim_more_enter, R.drawable.ic_overflow_24dp);
+    MORE("more", MR.strings.label_settings, MoreTab, R.drawable.anim_more_enter, R.drawable.ic_overflow_24dp);
+    // ANZ <--
 
     companion object {
         fun fromId(id: String): NavItem? = entries.find { it.id == id }
