@@ -148,11 +148,14 @@ class DownloadQueueScreenModel(
             val libraryAnimeList = getLibraryAnime.await()
             val completedList = mutableListOf<CompletedDownloadItem>()
 
-            for (anime in libraryAnimeList) {
+            for (lib in libraryAnimeList) {
+                val anime = lib.anime
                 val episodes = getEpisodesByAnimeId.await(anime.id)
                 val source = sourceManager.get(anime.source) ?: continue
                 for (episode in episodes) {
-                    if (downloadManager.isEpisodeDownloaded(episode.name, episode.scanlator, anime.title, anime.source)) {
+                    if (downloadManager.isEpisodeDownloaded(
+                            episode.name, episode.scanlator, anime.title, anime.source
+                        )) {
                         val size = downloadProvider.getEpisodeFileSize(
                             episodeName = episode.name,
                             episodeUrl = episode.url,
