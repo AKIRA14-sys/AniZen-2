@@ -195,7 +195,9 @@ class DownloadQueueScreenModel(
                 source = source,
                 episodeNumber = item.episode.episodeNumber,
             )
-            val fileToExport = epDir?.listFiles()?.firstOrNull { it.isFile }
+            // ANZ -->
+            val fileToExport = epDir?.listFiles()?.firstOrNull { it.isFile } ?: epDir?.takeIf { it.isFile }
+            // ANZ <--
             if (fileToExport == null || !fileToExport.exists()) {
                 withContext(Dispatchers.Main) {
                     context.toast("Downloaded file not found")
@@ -207,6 +209,11 @@ class DownloadQueueScreenModel(
                 val downloadsFolder = android.os.Environment.getExternalStoragePublicDirectory(
                     android.os.Environment.DIRECTORY_DOWNLOADS,
                 )
+                // ANZ -->
+                if (!downloadsFolder.exists()) {
+                    downloadsFolder.mkdirs()
+                }
+                // ANZ <--
                 val destFile = java.io.File(downloadsFolder, fileToExport.name ?: "${item.anime.title}_${item.episode.name}.mp4")
                 fileToExport.openInputStream().use { input ->
                     destFile.outputStream().use { output ->

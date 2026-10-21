@@ -176,14 +176,17 @@ object NavMigrator {
 object NavConfigValidator {
     const val MAX_BOTTOM_TABS = 6
     val REQUIRED_TABS = setOf(NavItem.LIBRARY.id, NavItem.MORE.id)
+    // ANZ -->
     private val ALL_STANDARD_TABS = setOf(
         NavItem.LIBRARY.id,
         NavItem.FEED.id,
         NavItem.UPDATES.id,
         NavItem.HISTORY.id,
         NavItem.BROWSE.id,
+        NavItem.DOWNLOADS.id,
         NavItem.MORE.id,
     )
+    // ANZ <--
 
     fun validate(config: NavConfig): NavConfig {
         var visible = config.visibleTabs.distinct().filter { NavItem.fromId(it) != null }.toMutableList()
