@@ -192,25 +192,48 @@ fun FeedScreen(
                     }
                 }
             } else if (items.isEmpty()) {
-                // Category is loaded but has no feeds
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = contentPadding.calculateBottomPadding()),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                // Category is loaded but has no feeds - show AniList Hero & Rails first, then empty state
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = listPadding,
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
-                    EmptyScreen(
-                        stringRes = SYMR.strings.feed_tab_empty,
-                    )
-                    Button(
-                        onClick = onAddSourceClick,
-                        modifier = Modifier.padding(top = 16.dp),
-                    ) {
-                        Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(text = "Add Sources")
+                    // ANZ -->
+                    if (trendingMedia.isNotEmpty()) {
+                        item(key = "anilist-hero-empty") {
+                            eu.kanade.presentation.anilist.HeroCarousel(mediaList = trendingMedia)
+                        }
                     }
+                    if (popularMedia.isNotEmpty()) {
+                        item(key = "anilist-popular-empty") {
+                            eu.kanade.presentation.anilist.AniListRail(
+                                title = "Popular on AniList",
+                                mediaList = popularMedia,
+                            )
+                        }
+                    }
+                    item(key = "feed-empty-state") {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 32.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            EmptyScreen(
+                                stringRes = SYMR.strings.feed_tab_empty,
+                            )
+                            Button(
+                                onClick = onAddSourceClick,
+                                modifier = Modifier.padding(top = 16.dp),
+                            ) {
+                                Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
+                                Spacer(Modifier.width(8.dp))
+                                Text(text = "Add Sources")
+                            }
+                        }
+                    }
+                    // ANZ <--
                 }
             } else {
                 // Show established containers

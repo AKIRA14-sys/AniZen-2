@@ -20,7 +20,11 @@ data class AniListMedia(
     val trailer: AniListTrailer? = null,
 ) {
     val displayTitle: String
-        get() = title?.userPreferred ?: title?.english ?: title?.romaji ?: title?.native ?: "Anime #$id"
+        get() = title?.english?.takeIf { it.isNotBlank() }
+            ?: title?.userPreferred?.takeIf { it.isNotBlank() }
+            ?: title?.romaji?.takeIf { it.isNotBlank() }
+            ?: title?.native?.takeIf { it.isNotBlank() }
+            ?: "Anime #$id"
 
     val displayCover: String
         get() = coverImage?.extraLarge ?: coverImage?.large ?: coverImage?.medium.orEmpty()

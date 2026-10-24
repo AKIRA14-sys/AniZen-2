@@ -244,7 +244,8 @@
     <!-- WebView -->
     <string name="action_webview_close_tab">Close tab</string>
 
-    <!-- ANZ Downloads -->
+    <!-- ANZ Feed & Downloads -->
+    <string name="feed">Home</string>
     <string name="downloads_tab_queue">Queue</string>
     <string name="downloads_tab_completed">Completed</string>
     <string name="action_play_offline">Play offline</string>
