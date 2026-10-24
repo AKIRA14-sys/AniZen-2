@@ -187,6 +187,21 @@ fun FeedScreen(
                     contentPadding = listPadding,
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
+                    // ANZ -->
+                    if (trendingMedia.isNotEmpty()) {
+                        item(key = "anilist-hero-loading") {
+                            eu.kanade.presentation.anilist.HeroCarousel(mediaList = trendingMedia)
+                        }
+                    }
+                    if (popularMedia.isNotEmpty()) {
+                        item(key = "anilist-popular-loading") {
+                            eu.kanade.presentation.anilist.AniListRail(
+                                title = "Popular on AniList",
+                                mediaList = popularMedia,
+                            )
+                        }
+                    }
+                    // ANZ <--
                     items(3, key = { "skeleton-$it" }) {
                         SkeletonFeedIsland()
                     }
