@@ -17,6 +17,7 @@ import eu.kanade.tachiyomi.ui.updates.UpdatesTab
 import kotlinx.collections.immutable.*
 import mihon.feature.airingschedule.AiringScheduleTab
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.ank.AMR
 
 sealed interface NavAction {
     val requiresConfirmation: Boolean get() = false
@@ -272,7 +273,7 @@ enum class NavItem(
     val behavior: NavBehavior = NavBehavior()
 ) {
     // ANZ -->
-    FEED("feed", MR.strings.feed, FeedTab, R.drawable.ic_dynamic_feed_24dp, R.drawable.ic_dynamic_feed_24dp),
+    FEED("feed", AMR.strings.feed, FeedTab, R.drawable.ic_dynamic_feed_24dp, R.drawable.ic_dynamic_feed_24dp),
     BROWSE("browse", MR.strings.action_search, BrowseTab, R.drawable.anim_browse_enter, R.drawable.ic_browse_filled_24dp),
     LIBRARY("library", MR.strings.label_library, LibraryTab, R.drawable.anim_library_enter, R.drawable.ic_animelibrary_outline_24dp),
     DOWNLOADS("downloads", MR.strings.label_download_queue, DownloadsTab, R.drawable.ic_download_item_24dp, R.drawable.ic_download_item_24dp),

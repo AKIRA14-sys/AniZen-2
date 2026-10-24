@@ -216,16 +216,33 @@ class DownloadQueueScreenModel(
                 if (!downloadsFolder.exists()) {
                     downloadsFolder.mkdirs()
                 }
-                // ANZ <--
-                val destFile = java.io.File(downloadsFolder, fileToExport.name ?: "${item.anime.title}_${item.episode.name}.mp4")
+
+                val epLabel = if (item.episode.episodeNumber > 0) {
+                    val epNumStr = if (item.episode.episodeNumber % 1.0 == 0.0) {
+                        item.episode.episodeNumber.toInt().toString()
+                    } else {
+                        item.episode.episodeNumber.toString()
+                    }
+                    "Episode $epNumStr"
+                } else {
+                    item.episode.name
+                }
+
+                val sanitizedAnimeTitle = item.anime.title.replace(Regex("""[\\/:*?"<>|]"""), "_").trim()
+                val sanitizedEpLabel = epLabel.replace(Regex("""[\\/:*?"<>|]"""), "_").trim()
+                val originalExt = fileToExport.name?.substringAfterLast('.', "mp4")?.takeIf { it.isNotBlank() } ?: "mp4"
+                val outputFilename = "$sanitizedAnimeTitle - $sanitizedEpLabel.$originalExt"
+
+                val destFile = java.io.File(downloadsFolder, outputFilename)
                 fileToExport.openInputStream().use { input ->
                     destFile.outputStream().use { output ->
                         input.copyTo(output)
                     }
                 }
                 withContext(Dispatchers.Main) {
-                    context.toast("Saved to ${destFile.name}")
+                    context.toast("Saved $outputFilename to Downloads")
                 }
+                // ANZ <--
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     context.toast("Failed to save file: ${e.message}")
