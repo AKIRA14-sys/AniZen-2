@@ -97,7 +97,47 @@ fun FeedScreen(
     // ANZ <--
 
     if (state.categories.isEmpty()) {
-        LoadingScreen(Modifier.padding(contentPadding))
+        val listPadding = remember(contentPadding) {
+            PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                top = 8.dp,
+                bottom = contentPadding.calculateBottomPadding() + 8.dp,
+            )
+        }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = contentPadding.calculateTopPadding()),
+            contentPadding = listPadding,
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            // ANZ -->
+            if (trendingMedia.isNotEmpty()) {
+                item(key = "anilist-hero-categories-loading") {
+                    eu.kanade.presentation.anilist.HeroCarousel(mediaList = trendingMedia)
+                }
+            }
+            if (popularMedia.isNotEmpty()) {
+                item(key = "anilist-popular-categories-loading") {
+                    eu.kanade.presentation.anilist.AniListRail(
+                        title = "Popular on AniList",
+                        mediaList = popularMedia,
+                    )
+                }
+            }
+            item(key = "categories-loading-indicator") {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            // ANZ <--
+        }
         return
     }
 
