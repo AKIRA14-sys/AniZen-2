@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import tachiyomi.domain.anime.interactor.GetAllAnime
 import tachiyomi.domain.anime.interactor.GetAnime
 import tachiyomi.domain.anime.interactor.GetLibraryAnime
 import tachiyomi.domain.anime.model.Anime
@@ -44,6 +45,7 @@ class DownloadQueueScreenModel(
     private val downloadManager: DownloadManager = Injekt.get(),
     private val downloadPreferences: DownloadPreferences = Injekt.get(),
     private val getLibraryAnime: GetLibraryAnime = Injekt.get(),
+    private val getAllAnime: GetAllAnime = Injekt.get(),
     private val getEpisodesByAnimeId: GetEpisodesByAnimeId = Injekt.get(),
     private val getAnime: GetAnime = Injekt.get(),
     private val sourceManager: SourceManager = Injekt.get(),
@@ -137,7 +139,10 @@ class DownloadQueueScreenModel(
                             }
                         }
                 }
-                .collectLatest { newList -> _state.update { newList } }
+                .collectLatest { newList ->
+                    _state.update { newList }
+                    refreshCompletedDownloads()
+                }
         }
 
         refreshCompletedDownloads()
@@ -145,11 +150,11 @@ class DownloadQueueScreenModel(
 
     fun refreshCompletedDownloads() {
         screenModelScope.launch(Dispatchers.IO) {
-            val libraryAnimeList = getLibraryAnime.await()
+            // ANZ -->
+            val allAnimeList = getAllAnime.await()
             val completedList = mutableListOf<CompletedDownloadItem>()
 
-            for (lib in libraryAnimeList) {
-                val anime = lib.anime
+            for (anime in allAnimeList) {
                 val episodes = getEpisodesByAnimeId.await(anime.id)
                 val source = sourceManager.get(anime.source) ?: continue
                 for (episode in episodes) {
@@ -170,6 +175,7 @@ class DownloadQueueScreenModel(
             }
 
             _completedDownloads.value = completedList
+            // ANZ <--
         }
     }
 

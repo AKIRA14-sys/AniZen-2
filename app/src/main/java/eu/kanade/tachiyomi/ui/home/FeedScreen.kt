@@ -273,15 +273,17 @@ fun FeedScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 32.dp),
-                            verticalArrangement = Arrangement.Center,
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            EmptyScreen(
-                                stringRes = SYMR.strings.feed_tab_empty,
+                            Text(
+                                text = stringResource(SYMR.strings.feed_tab_empty),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
                             )
                             Button(
                                 onClick = onAddSourceClick,
-                                modifier = Modifier.padding(top = 16.dp),
                             ) {
                                 Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
                                 Spacer(Modifier.width(8.dp))
