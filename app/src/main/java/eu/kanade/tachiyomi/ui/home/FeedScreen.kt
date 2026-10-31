@@ -1,5 +1,6 @@
 package eu.kanade.tachiyomi.ui.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -70,11 +71,28 @@ import tachiyomi.presentation.core.util.secondaryItemAlpha
 fun FeedScreen(
     screenModel: FeedScreenModel,
     onAnimeClick: (Anime, Long) -> Unit,
+    // ANZ -->
+    onAniListClick: (eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia) -> Unit = {},
+    // ANZ <--
     onAddSourceClick: () -> Unit,
     onSeeAllClick: (FeedScreenModel.FeedItem) -> Unit,
     contentPadding: PaddingValues,
     usePanorama: Boolean,
 ) {
+    // ANZ -->
+    val trendingList by screenModel.trendingAnime.collectAsState()
+    val popularList by screenModel.popularAnime.collectAsState()
+    val topRatedList by screenModel.topRatedAnime.collectAsState()
+    val thisSeasonList by screenModel.thisSeasonAnime.collectAsState()
+    val moviesList by screenModel.moviesAnime.collectAsState()
+    val actionList by screenModel.actionAnime.collectAsState()
+    val comedyList by screenModel.comedyAnime.collectAsState()
+    val romanceList by screenModel.romanceAnime.collectAsState()
+
+    LaunchedEffect(Unit) {
+        screenModel.loadAniListCatalog()
+    }
+    // ANZ <--
     val state by screenModel.state.collectAsState()
 
     val scope = rememberCoroutineScope()
@@ -175,26 +193,116 @@ fun FeedScreen(
                     }
                 }
             } else if (items.isEmpty()) {
-                // Category is loaded but has no feeds
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = contentPadding.calculateBottomPadding()),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    EmptyScreen(
-                        stringRes = SYMR.strings.feed_tab_empty,
-                    )
-                    Button(
-                        onClick = onAddSourceClick,
-                        modifier = Modifier.padding(top = 16.dp),
+                // ANZ -->
+                // Category has no extension feeds, show AniList rails if available without nesting scroll crashes
+                if (trendingList.isNotEmpty() || popularList.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = listPadding,
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(text = "Add Sources")
+                        if (trendingList.isNotEmpty()) {
+                            item(key = "empty_hero_carousel") {
+                                HeroCarousel(
+                                    mediaList = trendingList.take(5),
+                                    onMediaClick = onAniListClick,
+                                )
+                            }
+                            item(key = "empty_rail_trending") {
+                                AniListRail(
+                                    title = "Trending",
+                                    mediaList = trendingList,
+                                    onMediaClick = onAniListClick,
+                                )
+                            }
+                        }
+                        if (popularList.isNotEmpty()) {
+                            item(key = "empty_rail_popular") {
+                                AniListRail(
+                                    title = "Popular",
+                                    mediaList = popularList,
+                                    onMediaClick = onAniListClick,
+                                )
+                            }
+                        }
+                        if (topRatedList.isNotEmpty()) {
+                            item(key = "empty_rail_top_rated") {
+                                AniListRail(
+                                    title = "Top Rated",
+                                    mediaList = topRatedList,
+                                    onMediaClick = onAniListClick,
+                                )
+                            }
+                        }
+                        if (thisSeasonList.isNotEmpty()) {
+                            item(key = "empty_rail_this_season") {
+                                AniListRail(
+                                    title = "This Season",
+                                    mediaList = thisSeasonList,
+                                    onMediaClick = onAniListClick,
+                                )
+                            }
+                        }
+                        if (moviesList.isNotEmpty()) {
+                            item(key = "empty_rail_movies") {
+                                AniListRail(
+                                    title = "Movies",
+                                    mediaList = moviesList,
+                                    onMediaClick = onAniListClick,
+                                )
+                            }
+                        }
+                        if (actionList.isNotEmpty()) {
+                            item(key = "empty_rail_action") {
+                                AniListRail(
+                                    title = "Action",
+                                    mediaList = actionList,
+                                    onMediaClick = onAniListClick,
+                                )
+                            }
+                        }
+                        if (comedyList.isNotEmpty()) {
+                            item(key = "empty_rail_comedy") {
+                                AniListRail(
+                                    title = "Comedy",
+                                    mediaList = comedyList,
+                                    onMediaClick = onAniListClick,
+                                )
+                            }
+                        }
+                        if (romanceList.isNotEmpty()) {
+                            item(key = "empty_rail_romance") {
+                                AniListRail(
+                                    title = "Romance",
+                                    mediaList = romanceList,
+                                    onMediaClick = onAniListClick,
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = contentPadding.calculateBottomPadding()),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = "No anime feeds yet",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Button(
+                            onClick = onAddSourceClick,
+                            modifier = Modifier.padding(top = 16.dp),
+                        ) {
+                            Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
+                            Spacer(Modifier.width(8.dp))
+                            Text(text = "Add Sources")
+                        }
                     }
                 }
+                // ANZ <--
             } else {
                 // Show established containers
                 LazyColumn(
@@ -202,6 +310,87 @@ fun FeedScreen(
                     contentPadding = listPadding,
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
+                    // ANZ -->
+                    if (trendingList.isNotEmpty()) {
+                        item(key = "hero_carousel") {
+                            HeroCarousel(
+                                mediaList = trendingList.take(5),
+                                onMediaClick = onAniListClick,
+                            )
+                        }
+                        item(key = "rail_trending") {
+                            AniListRail(
+                                title = "Trending",
+                                mediaList = trendingList,
+                                onMediaClick = onAniListClick,
+                            )
+                        }
+                    }
+                    if (popularList.isNotEmpty()) {
+                        item(key = "rail_popular") {
+                            AniListRail(
+                                title = "Popular",
+                                mediaList = popularList,
+                                onMediaClick = onAniListClick,
+                            )
+                        }
+                    }
+                    if (topRatedList.isNotEmpty()) {
+                        item(key = "rail_top_rated") {
+                            AniListRail(
+                                title = "Top Rated",
+                                mediaList = topRatedList,
+                                onMediaClick = onAniListClick,
+                            )
+                        }
+                    }
+                    if (thisSeasonList.isNotEmpty()) {
+                        item(key = "rail_this_season") {
+                            AniListRail(
+                                title = "This Season",
+                                mediaList = thisSeasonList,
+                                onMediaClick = onAniListClick,
+                            )
+                        }
+                    }
+                    if (moviesList.isNotEmpty()) {
+                        item(key = "rail_movies") {
+                            AniListRail(
+                                title = "Movies",
+                                mediaList = moviesList,
+                                onMediaClick = onAniListClick,
+                            )
+                        }
+                    }
+                    if (actionList.isNotEmpty()) {
+                        item(key = "rail_action") {
+                            AniListRail(
+                                title = "Action",
+                                mediaList = actionList,
+                                onMediaClick = onAniListClick,
+                            )
+                        }
+                    }
+                    if (comedyList.isNotEmpty()) {
+                        item(key = "rail_comedy") {
+                            AniListRail(
+                                title = "Comedy",
+                                mediaList = comedyList,
+                                onMediaClick = onAniListClick,
+                            )
+                        }
+                    }
+                    if (romanceList.isNotEmpty()) {
+                        item(key = "rail_romance") {
+                            AniListRail(
+                                title = "Romance",
+                                mediaList = romanceList,
+                                onMediaClick = onAniListClick,
+                            )
+                        }
+                    }
+                    // ANZ <--
+
                     itemsIndexed(
                         items = items,
                         key = { _, it -> "feed-${it.feed.id}" },
@@ -315,6 +504,129 @@ private fun FeedIsland(
         }
     }
 }
+
+// ANZ -->
+@Composable
+private fun HeroCarousel(
+    mediaList: List<eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia>,
+    onMediaClick: (eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia) -> Unit,
+) {
+    if (mediaList.isEmpty()) return
+    val pagerState = rememberPagerState { mediaList.size }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+        ) { page ->
+            val media = mediaList[page]
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 4.dp),
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                onClick = { onMediaClick(media) },
+            ) {
+                androidx.compose.foundation.layout.Box(modifier = Modifier.fillMaxSize()) {
+                    val imageUrl = media.bannerImage ?: media.posterUrl
+                    if (!imageUrl.isNullOrBlank()) {
+                        coil3.compose.AsyncImage(
+                            model = imageUrl,
+                            contentDescription = null,
+                            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                    Surface(
+                        color = androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomStart)
+                            .padding(8.dp),
+                        shape = RoundedCornerShape(6.dp),
+                    ) {
+                        Text(
+                            text = media.displayTitle,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = androidx.compose.ui.graphics.Color.White,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(6.dp),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AniListRail(
+    title: String,
+    mediaList: List<eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia>,
+    onMediaClick: (eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia) -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        tonalElevation = 2.dp,
+    ) {
+        Column(modifier = Modifier.padding(vertical = 12.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            )
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                items(
+                    items = mediaList,
+                    key = { "al-${it.id}" },
+                ) { media ->
+                    Column(
+                        modifier = Modifier
+                            .width(105.dp)
+                            .clickable { onMediaClick(media) },
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(150.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        ) {
+                            if (!media.posterUrl.isNullOrBlank()) {
+                                coil3.compose.AsyncImage(
+                                    model = media.posterUrl,
+                                    contentDescription = null,
+                                    contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize(),
+                                )
+                            }
+                        }
+                        Text(
+                            text = media.displayTitle,
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.height(32.dp),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+// ANZ <--
 
 @Composable
 private fun FeedCard(

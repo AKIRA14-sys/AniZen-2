@@ -17,6 +17,8 @@ import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.components.material.Scaffold
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Casino
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.IconButton
 
@@ -59,11 +61,40 @@ data object FeedTab : Tab {
         val feedMode by uiPreferences.feedPanoramaMode().collectAsStatePref() as androidx.compose.runtime.State<PanoramaMode>
         val effectivePanorama = remember(globalPanorama, feedMode) { feedMode.resolve(globalPanorama) }
 
+        val context = androidx.compose.ui.platform.LocalContext.current
+        val feedScreenModel = rememberScreenModel { FeedScreenModel() }
+        val coroutineScope = rememberCoroutineScope()
+
         Scaffold(
             topBar = {
                 eu.kanade.presentation.components.AppBar(
                     title = stringResource(SYMR.strings.feed),
                     actions = {
+                        // ANZ -->
+                        IconButton(onClick = {
+                            coroutineScope.launch {
+                                val random = feedScreenModel.getRandomAnime()
+                                if (random != null) {
+                                    navigator.push(eu.kanade.tachiyomi.ui.home.anilist.AniListDetailsScreen(random))
+                                } else {
+                                    android.widget.Toast.makeText(context, "No anime found", android.widget.Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Casino,
+                                contentDescription = "Random Anime",
+                            )
+                        }
+                        IconButton(onClick = {
+                            navigator.push(eu.kanade.tachiyomi.ui.home.anilist.AniListSearchScreen())
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search Anime",
+                            )
+                        }
+                        // ANZ <--
                         PanoramaModeToggle(
                             panoramaMode = feedMode,
                             globalPanorama = globalPanorama,
@@ -81,16 +112,19 @@ data object FeedTab : Tab {
                 )
             }
         ) { contentPadding ->
-            Content(contentPadding, effectivePanorama)
+            Content(contentPadding, effectivePanorama, feedScreenModel)
         }
     }
 
     @Composable
-    fun Content(contentPadding: PaddingValues, usePanorama: Boolean) {
+    fun Content(
+        contentPadding: PaddingValues,
+        usePanorama: Boolean,
+        screenModel: FeedScreenModel = rememberScreenModel { FeedScreenModel() },
+    ) {
         val navigator = LocalNavigator.currentOrThrow
         val tabNavigator = LocalTabNavigator.current
         val scope = rememberCoroutineScope()
-        val screenModel = rememberScreenModel { FeedScreenModel() }
         
         FeedScreen(
             screenModel = screenModel,
@@ -98,6 +132,11 @@ data object FeedTab : Tab {
                 screenModel.onAnimeClicked(anime, feedId)
                 navigator.push(AnimeScreen(anime.id)) 
             },
+            // ANZ -->
+            onAniListClick = { media ->
+                navigator.push(eu.kanade.tachiyomi.ui.home.anilist.AniListDetailsScreen(media))
+            },
+            // ANZ <--
             onAddSourceClick = { 
                 scope.launch {
                     tabNavigator.current = BrowseTab

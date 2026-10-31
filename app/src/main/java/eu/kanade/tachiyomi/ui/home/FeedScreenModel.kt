@@ -252,6 +252,36 @@ class FeedScreenModel(
         }
     }
 
+    // ANZ -->
+    private val anilistRepo = eu.kanade.tachiyomi.data.track.anilist.AniListRepository()
+
+    val trendingAnime = kotlinx.coroutines.flow.MutableStateFlow<List<eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia>>(emptyList())
+    val popularAnime = kotlinx.coroutines.flow.MutableStateFlow<List<eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia>>(emptyList())
+    val topRatedAnime = kotlinx.coroutines.flow.MutableStateFlow<List<eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia>>(emptyList())
+    val thisSeasonAnime = kotlinx.coroutines.flow.MutableStateFlow<List<eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia>>(emptyList())
+    val moviesAnime = kotlinx.coroutines.flow.MutableStateFlow<List<eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia>>(emptyList())
+    val actionAnime = kotlinx.coroutines.flow.MutableStateFlow<List<eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia>>(emptyList())
+    val comedyAnime = kotlinx.coroutines.flow.MutableStateFlow<List<eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia>>(emptyList())
+    val romanceAnime = kotlinx.coroutines.flow.MutableStateFlow<List<eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia>>(emptyList())
+
+    fun loadAniListCatalog() {
+        screenModelScope.launchIO {
+            launch { trendingAnime.value = anilistRepo.getTrending() }
+            launch { popularAnime.value = anilistRepo.getPopular() }
+            launch { topRatedAnime.value = anilistRepo.getTopRated() }
+            launch { thisSeasonAnime.value = anilistRepo.getThisSeason() }
+            launch { moviesAnime.value = anilistRepo.getMovies() }
+            launch { actionAnime.value = anilistRepo.getByGenre("Action") }
+            launch { comedyAnime.value = anilistRepo.getByGenre("Comedy") }
+            launch { romanceAnime.value = anilistRepo.getByGenre("Romance") }
+        }
+    }
+
+    suspend fun getRandomAnime(): eu.kanade.tachiyomi.data.track.anilist.dto.AniListMedia? {
+        return anilistRepo.getRandom()
+    }
+    // ANZ <--
+
     @Immutable
     data class State(
         val items: ImmutableMap<Long, ImmutableList<FeedItem>> = persistentMapOf(),
